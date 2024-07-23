@@ -1,0 +1,8 @@
+.DS_Store
+.idea/
+.mvn/
+HELP.md
+mvnw
+mvnw.cmd
+/target
+/src/main/resources
