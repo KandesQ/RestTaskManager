@@ -28,11 +28,11 @@ public class TaskController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<?> getParticularUserTasks(
+    public ResponseEntity<?> getSimilarUserTasks(
             @PathVariable @NotEmpty String username,
             @RequestParam @NotNull @NotBlank String taskTitle
     ) throws TaskNotFoundException {
-        return ResponseEntity.ok(taskService.getParticularUserTasks(username, taskTitle));
+        return ResponseEntity.ok(taskService.getSimilarUserTasks(username, taskTitle));
     }
 
     @PostMapping("/create")
@@ -52,18 +52,18 @@ public class TaskController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteTaskFromUser(
             @NotEmpty @RequestParam String username,
-            @NotEmpty @RequestParam String taskTitle
+            @NotEmpty @RequestParam Long taskId
     ) throws UserNotFoundException, TaskNotFoundException {
-        taskService.deleteTask(username, taskTitle);
-        return ResponseEntity.ok().body(taskTitle + " was deleted from " + username);
+        taskService.deleteTask(username, taskId);
+        return ResponseEntity.ok().body("Task " + taskId + " was deleted from " + username);
     }
 
     @PostMapping("/complete")
     public ResponseEntity<?> completeTask(
             @NotEmpty @RequestParam String username,
-            @NotEmpty @RequestParam String taskTitle
+            @NotEmpty @RequestParam Long taskId
     ) throws UserNotFoundException, TaskNotFoundException {
-        taskService.completeTask(username, taskTitle);
-        return ResponseEntity.ok().body(taskTitle + " completed");
+        taskService.completeTask(username, taskId);
+        return ResponseEntity.ok().body("Task " + taskId + " completed");
     }
 }

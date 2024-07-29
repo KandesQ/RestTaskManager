@@ -37,6 +37,7 @@ public class UserController {
         return ResponseEntity.ok("User " + userRequestDto.getUsername() + " was successfully registered!");
     }
 
+    // as the names are identical it processes users by name
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(
             @RequestParam @NotBlank(message = "must be not blank") String username

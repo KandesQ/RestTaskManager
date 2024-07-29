@@ -32,7 +32,7 @@ public class TaskService {
         return taskResponseDtos;
     }
 
-    public List<TaskResponseDto> getParticularUserTasks(String username, String taskTitle) throws TaskNotFoundException {
+    public List<TaskResponseDto> getSimilarUserTasks(String username, String taskTitle) throws TaskNotFoundException {
         List<TaskResponseDto> taskEntities = taskRepository.findAllByTitle(taskTitle).stream()
                 .filter(taskEntity -> taskEntity.getUserEntity().getUsername().equals(username))
                 .map(TaskResponseDto::EntityToDto)
@@ -60,8 +60,7 @@ public class TaskService {
         taskRepository.deleteAll();
     }
 
-    // delete first element
-    public void deleteTask(String username, String taskTitle) throws TaskNotFoundException, UserNotFoundException {
+    public void deleteTask(String username, Long taskId) throws TaskNotFoundException, UserNotFoundException {
         UserEntity userEntity = userRepository.findByUsername(username);
         TaskEntity deletableTask;
         if (userEntity == null) {
@@ -69,15 +68,15 @@ public class TaskService {
         }
         try {
             deletableTask = userEntity.getTaskEntities().stream()
-                    .filter(taskEntity -> taskEntity.getTitle().equals(taskTitle))
+                    .filter(taskEntity -> taskEntity.getId().equals(taskId))
                     .findFirst().get();
         } catch (NoSuchElementException e) {
-            throw new TaskNotFoundException(username + " doesn't have " + taskTitle);
+            throw new TaskNotFoundException(username + " doesn't have task with id=" + taskId);
         }
         taskRepository.deleteById(deletableTask.getId());
     }
 
-    public void completeTask(String username, String taskTitle) throws TaskNotFoundException, UserNotFoundException {
+    public void completeTask(String username, Long taskId) throws TaskNotFoundException, UserNotFoundException {
         UserEntity userEntity = userRepository.findByUsername(username);
         TaskEntity completableTask;
 
@@ -87,10 +86,10 @@ public class TaskService {
 
         try {
             completableTask = userEntity.getTaskEntities().stream()
-                    .filter(taskEntity -> taskEntity.getTitle().equals(taskTitle))
+                    .filter(taskEntity -> taskEntity.getId().equals(taskId))
                     .findFirst().get();
         } catch (NoSuchElementException e) {
-            throw new TaskNotFoundException(username + " doesn't have " + taskTitle);
+            throw new TaskNotFoundException(username + " doesn't have task with id=" + taskId);
         }
         completableTask.setIsDone(!completableTask.getIsDone());
         taskRepository.save(completableTask);
