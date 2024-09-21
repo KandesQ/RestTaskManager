@@ -49,6 +49,7 @@ class UserServiceUnitTests {
         Mockito.when(userRepository.findAll()).thenReturn(userEntities);
 
         Assertions.assertIterableEquals(userResponseDtos, userService.getAllUsers());
+        Mockito.verify(userRepository, Mockito.times(1)).findAll();
     }
 
     @Test
