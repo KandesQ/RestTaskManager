@@ -37,6 +37,7 @@ public class ErrorHandlingControllerAdvice {
     }
 
     // internal server errors
+    // bad request errors
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
