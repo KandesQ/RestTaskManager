@@ -35,10 +35,17 @@ public class UserService {
     }
 
     public void createUser(UserRequestDto userRequestDto) throws NoUniqueUsernameException {
-        if (userRepository.findByUsername(userRequestDto.getUsername()) != null) {
+        String userRequestName = userRequestDto.getUsername();
+
+        UserEntity user = userRepository.findByUsername(userRequestName);
+
+        if (user != null) {
             throw new NoUniqueUsernameException("The username must be unique. User " + userRequestDto.getUsername() + " already exist");
         }
-        userRepository.save(UserEntity.dtoToEntity(userRequestDto));
+
+        UserEntity userEntity = UserEntity.dtoToEntity(userRequestDto);
+
+        userRepository.save(userEntity);
     }
 
     public void deleteUserByUsername(String username) throws UserNotFoundException {

@@ -11,6 +11,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -37,5 +38,18 @@ public class UserEntity {
         userEntity.setRegisteredAt(LocalDateTime.now());
 
         return userEntity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(registeredAt, that.registeredAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, registeredAt);
     }
 }
