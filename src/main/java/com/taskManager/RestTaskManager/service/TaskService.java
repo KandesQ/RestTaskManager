@@ -25,37 +25,50 @@ public class TaskService {
 
     public List<TaskResponseDto> getAllTasks() throws TaskNotFoundException {
         List<TaskResponseDto> taskResponseDtos = new ArrayList<>();
-        taskRepository.findAll().forEach(taskEntity -> taskResponseDtos.add(TaskResponseDto.EntityToDto(taskEntity)));
-        if (taskResponseDtos.isEmpty()) {
+        List<TaskEntity> taskEntities = taskRepository.findAll();
+
+        if (taskEntities.isEmpty()) {
             throw new TaskNotFoundException("There's no tasks in database");
         }
+
+        taskEntities.forEach(taskEntity -> {
+            TaskResponseDto taskResponseDto = TaskResponseDto.EntityToDto(taskEntity);
+            taskResponseDtos.add(taskResponseDto);
+        });
         return taskResponseDtos;
     }
 
+    // public List<TaskResponseDto> getUserTasks(String username) {}
+
+    // returns all username tasks with similar task title
     public List<TaskResponseDto> getSimilarUserTasks(String username, String taskTitle) throws TaskNotFoundException {
-        List<TaskResponseDto> taskEntities = taskRepository.findAllByTitle(taskTitle).stream()
-                .filter(taskEntity -> taskEntity.getUserEntity().getUsername().equals(username))
-                .map(TaskResponseDto::EntityToDto)
-                .toList();
+        List<TaskEntity> taskEntities = taskRepository.findAllByTitle(taskTitle);
+
         if (taskEntities.isEmpty()) {
             throw new TaskNotFoundException("User " + username + " doesn't have tasks with title " + taskTitle);
         }
-        return taskEntities;
+
+        List<TaskResponseDto> taskResponseDtos = taskEntities.stream()
+                .filter(taskEntity -> taskEntity.getUserEntity().getUsername().equals(username))
+                .map(TaskResponseDto::EntityToDto)
+                .toList();
+
+        return taskResponseDtos;
     }
 
     public void createTask(String username, TaskRequestDto taskRequestDto) throws UserNotFoundException {
         UserEntity userEntity = userRepository.findByUsername(username);
-        TaskEntity taskEntity = TaskEntity.dtoToEntity(taskRequestDto);
         if (userEntity == null) {
             throw new UserNotFoundException("User " + username + " doesn't exist");
         }
+        TaskEntity taskEntity = TaskEntity.dtoToEntity(taskRequestDto);
         taskEntity.setUserEntity(userEntity);
         taskRepository.save(taskEntity);
     }
 
-    public void deleteAllTasks() throws UserNotFoundException {
+    public void deleteAllTasks() throws TaskNotFoundException {
         if (taskRepository.count() == 0) {
-            throw new UserNotFoundException("There are no users in database");
+            throw new TaskNotFoundException("There are no tasks in database");
         }
         taskRepository.deleteAll();
     }

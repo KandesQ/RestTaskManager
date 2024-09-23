@@ -44,7 +44,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/delete/all")
-    public ResponseEntity<?> deleteAllUsers() throws UserNotFoundException {
+    public ResponseEntity<?> deleteAllUsers() throws TaskNotFoundException {
         taskService.deleteAllTasks();
         return ResponseEntity.ok("All tasks was successfully deleted");
     }
