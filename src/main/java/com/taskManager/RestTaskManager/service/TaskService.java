@@ -38,8 +38,6 @@ public class TaskService {
         return taskResponseDtos;
     }
 
-    // public List<TaskResponseDto> getUserTasks(String username) {}
-
     // returns all username tasks with similar task title
     public List<TaskResponseDto> getSimilarUserTasks(String username, String taskTitle) throws TaskNotFoundException {
         List<TaskEntity> taskEntities = taskRepository.findAllByTitle(taskTitle);
