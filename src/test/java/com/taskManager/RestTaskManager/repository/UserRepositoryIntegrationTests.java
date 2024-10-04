@@ -6,6 +6,7 @@ import com.taskManager.RestTaskManager.entity.UserEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,15 +21,20 @@ public class UserRepositoryIntegrationTests {
     @Autowired
     private UserRepository userRepository;
 
+    UserEntity expectedUser;
+
     // make tests: CREATE READ UPDATE (SAVE) DELETE
 
-    @Test
-    public void saveUserTest() {
-        UserEntity expectedUser = new UserEntity();
+    @BeforeEach
+    public void initialize() {
+        expectedUser = new UserEntity();
 
         expectedUser.setUsername("John");
         expectedUser.setPassword("password");
+    }
 
+    @Test
+    public void saveUserTest() {
         userRepository.save(expectedUser);
 
         Optional<UserEntity> actualFoundedByIdUser = userRepository.findById(expectedUser.getId());
@@ -42,11 +48,6 @@ public class UserRepositoryIntegrationTests {
 
     @Test
     public void updateUserTest() {
-        UserEntity expectedUser = new UserEntity();
-
-        expectedUser.setUsername("John");
-        expectedUser.setPassword("password");
-
         userRepository.save(expectedUser);
 
         expectedUser.setUsername("Joe");
@@ -60,13 +61,13 @@ public class UserRepositoryIntegrationTests {
 
         assertThat(actualUpdatedUser.get()).isEqualTo(expectedUser);
 
-        // check that JPA has not added second entity (maybe, it could have happened :) )
+        // check that JPA has not added second entity (maybe, it could have happened)
         Assertions.assertEquals(1, userRepository.count());
 
     }
 
     @Test
-    public void findByIdUserTest() {
+    public void findUserByIdTest() {
         UserEntity expectedUser1 = new UserEntity();
         UserEntity expectedUser2 = new UserEntity();
 
@@ -90,18 +91,12 @@ public class UserRepositoryIntegrationTests {
     }
 
     @Test
-    public void deleteByIdUserTest() {
-        // maybe I can paste it in @BeforeEach method?
-        UserEntity expectedDeletedUser = new UserEntity();
+    public void deleteUserByIdTest() {
+        userRepository.save(expectedUser);
 
-        expectedDeletedUser.setUsername("John");
-        expectedDeletedUser.setPassword("password");
+        userRepository.deleteById(expectedUser.getId());
 
-        userRepository.save(expectedDeletedUser);
-
-        userRepository.deleteById(expectedDeletedUser.getId());
-
-        Optional<UserEntity> emptyUser = userRepository.findById(expectedDeletedUser.getId());
+        Optional<UserEntity> emptyUser = userRepository.findById(expectedUser.getId());
 
         assertThat(userRepository.findAll()).isEmpty();
         assertThat(emptyUser.isPresent()).isFalse();
@@ -110,11 +105,6 @@ public class UserRepositoryIntegrationTests {
 
     @Test
     public void findByUserNameTest() {
-        UserEntity expectedUser = new UserEntity();
-
-        expectedUser.setUsername("John");
-        expectedUser.setPassword("password");
-
         userRepository.save(expectedUser);
 
         Optional<UserEntity> actualUser = userRepository.findByUsername(expectedUser.getUsername());
@@ -122,5 +112,13 @@ public class UserRepositoryIntegrationTests {
         assertThat(actualUser.isPresent()).isTrue();
 
         assertThat(actualUser.get()).isEqualTo(expectedUser);
+    }
+
+    // just for sure. Must return nullable optional
+    @Test
+    public void findNotExistingUserByUserNameTest() {
+        Optional<UserEntity> actutalUser = userRepository.findByUsername(expectedUser.getUsername());
+
+        assertThat(actutalUser.isPresent()).isFalse();
     }
 }
