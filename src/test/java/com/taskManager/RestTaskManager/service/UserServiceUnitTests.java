@@ -83,7 +83,7 @@ class UserServiceUnitTests {
         // initialize method args
         UserRequestDto expectedUserRequestDto = new UserRequestDto("user1", "1234567890");
 
-        Mockito.when(userRepository.findByUsername(expectedUserRequestDto.getUsername())).thenReturn(null);
+        Mockito.when(userRepository.findByUsername(expectedUserRequestDto.getUsername())).thenReturn(Optional.empty());
 
         String expectedUserRequestName = expectedUserRequestDto.getUsername();
         UserEntity expectedUserEntity = UserEntity.dtoToEntity(expectedUserRequestDto);
@@ -145,7 +145,7 @@ class UserServiceUnitTests {
 
     @Test
     public void deleteUserByUsernameThrowsUserNotFoundExceptionTest() {
-        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(null);
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> userService.deleteUserByUsername("some string"));
     }
@@ -173,7 +173,7 @@ class UserServiceUnitTests {
 
     @Test
     public void getUserByUsernameThrowsUserNotFoundExceptionTest() {
-        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(null);
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> userService.getUserByUsername("some string"));
     }

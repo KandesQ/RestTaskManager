@@ -184,7 +184,7 @@ class TaskServiceUnitTests {
 
     @Test
     public void deleteTaskThrowsUserNotFoundExceptionTest() {
-        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(null);
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> taskService.deleteTask(Mockito.anyString(), 0L));
     }
@@ -234,7 +234,7 @@ class TaskServiceUnitTests {
 
     @Test
     public void completeTaskThrowsUserNotFoundExceptionTest() {
-        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(null);
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> taskService.completeTask(Mockito.anyString(), 0L));
     }
