@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.xml.transform.sax.SAXResult;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceUnitTests {
@@ -111,11 +112,11 @@ class UserServiceUnitTests {
     }
 
     @Test
-    public void createUserThrowsNoUniqueUserNameExceptionTest() throws NoUniqueUsernameException {
+    public void createUserThrowsNoUniqueUserNameExceptionTest() {
         // initialize method args
         UserRequestDto userRequestDto = new UserRequestDto("user1", "1234567890");
 
-        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(new UserEntity());
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(new UserEntity()));
 
         Assertions.assertThrows(NoUniqueUsernameException.class, () -> userService.createUser(userRequestDto));
     }
@@ -123,7 +124,7 @@ class UserServiceUnitTests {
     @Test
     public void deleteUserByUsernameTest() throws UserNotFoundException {
         UserEntity expectedUserEntity = expectedUserEntities.get(0);
-        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(expectedUserEntity);
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(expectedUserEntity));
 
         ArgumentCaptor<String> userNameArgumentCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<UserEntity> userEntityArgumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
@@ -154,7 +155,7 @@ class UserServiceUnitTests {
         UserEntity userEntity = expectedUserEntities.get(0);
         UserResponseDto expectedResponseDto = UserResponseDto.EntityToDto(userEntity);
 
-        Mockito.when(userRepository.findByUsername(userEntity.getUsername())).thenReturn(userEntity);
+        Mockito.when(userRepository.findByUsername(userEntity.getUsername())).thenReturn(Optional.of(userEntity));
 
         String expectedUserName = "user1";
 

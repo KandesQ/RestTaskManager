@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,9 +38,10 @@ public class UserService {
     public void createUser(UserRequestDto userRequestDto) throws NoUniqueUsernameException {
         String userRequestName = userRequestDto.getUsername();
 
-        UserEntity user = userRepository.findByUsername(userRequestName);
+        Optional<UserEntity> user = userRepository.findByUsername(userRequestName);
 
-        if (user != null) {
+        // user != null
+        if (user.isPresent()) {
             throw new NoUniqueUsernameException("The username must be unique. User " + userRequestDto.getUsername() + " already exist");
         }
 
@@ -49,19 +51,19 @@ public class UserService {
     }
 
     public void deleteUserByUsername(String username) throws UserNotFoundException {
-        UserEntity userEntity = userRepository.findByUsername(username);
-        if (userEntity == null) {
+        Optional<UserEntity> userEntity = userRepository.findByUsername(username);
+        if (userEntity.isEmpty()) {
             throw new UserNotFoundException("User " + username + " doesn't exist");
         }
-        userRepository.delete(userEntity);
+        userRepository.delete(userEntity.get());
     }
 
     public UserResponseDto getUserByUsername(String username) throws UserNotFoundException {
-        UserEntity userEntity = userRepository.findByUsername(username);
+        Optional<UserEntity> userEntity = userRepository.findByUsername(username);
         // DRY повторяющийся код. Посмотреть про Optional и сделать с ним
-        if (userEntity == null) {
+        if (userEntity.isEmpty()) {
             throw new UserNotFoundException("User " + username + " doesn't exist");
         }
-        return UserResponseDto.EntityToDto(userEntity);
+        return UserResponseDto.EntityToDto(userEntity.get());
     }
 }

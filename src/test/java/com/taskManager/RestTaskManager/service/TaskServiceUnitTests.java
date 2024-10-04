@@ -1,6 +1,5 @@
 package com.taskManager.RestTaskManager.service;
 
-import ch.qos.logback.core.testUtil.MockInitialContext;
 import com.taskManager.RestTaskManager.dto.TaskRequestDto;
 import com.taskManager.RestTaskManager.dto.TaskResponseDto;
 import com.taskManager.RestTaskManager.entity.TaskEntity;
@@ -9,9 +8,6 @@ import com.taskManager.RestTaskManager.exception.TaskNotFoundException;
 import com.taskManager.RestTaskManager.exception.UserNotFoundException;
 import com.taskManager.RestTaskManager.repository.TaskRepository;
 import com.taskManager.RestTaskManager.repository.UserRepository;
-import org.apache.catalina.User;
-import org.hibernate.sql.model.ast.builder.TableUpdateBuilderSkipped;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,10 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.scheduling.config.Task;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -119,7 +115,7 @@ class TaskServiceUnitTests {
         ArgumentCaptor<String> userNameCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<TaskEntity> taskEntityCaptor = ArgumentCaptor.forClass(TaskEntity.class);
 
-        Mockito.when(userRepository.findByUsername(expectedUserName)).thenReturn(expectedUserEntity);
+        Mockito.when(userRepository.findByUsername(expectedUserName)).thenReturn(Optional.of(expectedUserEntity));
 
         taskService.createTask(expectedUserName, expectedTaskRequestDto);
 
@@ -172,7 +168,7 @@ class TaskServiceUnitTests {
         ArgumentCaptor<String> userNameCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Long> deletableTaskIdCaptor = ArgumentCaptor.forClass(Long.class);
 
-        Mockito.when(userRepository.findByUsername(expectedUserName)).thenReturn(expectedUserEntity);
+        Mockito.when(userRepository.findByUsername(expectedUserName)).thenReturn(Optional.of(expectedUserEntity));
 
         taskService.deleteTask(expectedUserName, expectedDeletableTaskId);
 
@@ -198,7 +194,7 @@ class TaskServiceUnitTests {
         UserEntity emptyTaskListUser = new UserEntity();
         emptyTaskListUser.setTaskEntities(List.of());
 
-        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(emptyTaskListUser);
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(emptyTaskListUser));
 
         assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(Mockito.anyString(),0L));
 
@@ -217,7 +213,7 @@ class TaskServiceUnitTests {
         String expectedUserName = expectedUserEntity.getUsername();
         Boolean expectedTaskStatus = !expectedTaskEntity.getIsDone();
 
-        Mockito.when(userRepository.findByUsername(expectedUserName)).thenReturn(expectedUserEntity);
+        Mockito.when(userRepository.findByUsername(expectedUserName)).thenReturn(Optional.of(expectedUserEntity));
 
         ArgumentCaptor<String> expectedUserNameCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<TaskEntity> completableTaskEntityCaptor = ArgumentCaptor.forClass(TaskEntity.class);
@@ -248,7 +244,7 @@ class TaskServiceUnitTests {
         UserEntity expectedUserEntity = new UserEntity();
         expectedUserEntity.setTaskEntities(List.of());
 
-        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(expectedUserEntity);
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(expectedUserEntity));
 
         assertThrows(TaskNotFoundException.class, () -> taskService.completeTask(Mockito.anyString(), 0L));
     }
