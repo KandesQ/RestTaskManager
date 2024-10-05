@@ -34,7 +34,7 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRequestDto userRequestDto) throws NoUniqueUsernameException {
         userService.createUser(userRequestDto);
-        return ResponseEntity.ok("User " + userRequestDto.getUsername() + " was successfully registered!");
+        return ResponseEntity.status(201).body("User " + userRequestDto.getUsername() + " was successfully registered!");
     }
 
     // as the names are identical it processes users by name

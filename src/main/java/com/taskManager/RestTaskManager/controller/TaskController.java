@@ -40,13 +40,13 @@ public class TaskController {
             @Valid @RequestBody TaskRequestDto taskRequestDto,
             @RequestParam @NotEmpty String username) throws UserNotFoundException {
         taskService.createTask(username, taskRequestDto);
-        return ResponseEntity.ok("Task " + taskRequestDto.getTitle() + " was created for " + username);
+        return ResponseEntity.status(201).body("Task " + taskRequestDto.getTitle() + " was created for " + username);
     }
 
     @DeleteMapping("/delete/all")
     public ResponseEntity<?> deleteAllUsers() throws TaskNotFoundException {
         taskService.deleteAllTasks();
-        return ResponseEntity.ok("All tasks was successfully deleted");
+        return ResponseEntity.status(204).body("All tasks was successfully deleted");
     }
 
     @DeleteMapping("/delete")
@@ -55,7 +55,7 @@ public class TaskController {
             @NotEmpty @RequestParam Long taskId
     ) throws UserNotFoundException, TaskNotFoundException {
         taskService.deleteTask(username, taskId);
-        return ResponseEntity.ok().body("Task " + taskId + " was deleted from " + username);
+        return ResponseEntity.ok("Task " + taskId + " was deleted from " + username);
     }
 
     @PostMapping("/complete")
@@ -64,6 +64,6 @@ public class TaskController {
             @NotEmpty @RequestParam Long taskId
     ) throws UserNotFoundException, TaskNotFoundException {
         taskService.completeTask(username, taskId);
-        return ResponseEntity.ok().body("Task " + taskId + " completed");
+        return ResponseEntity.ok("Task " + taskId + " completed");
     }
 }
